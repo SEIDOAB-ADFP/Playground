@@ -144,6 +144,22 @@ public static class Excericee0201
                                        .Take(10);
         foreach (var x in longestTracks) Console.WriteLine($"- {x.Track.Name} ({x.Track.DurationSeconds}s) - {x.AlbumName} by {x.GroupName}");
 #endregion
+#region Question 9 Alternative Query based syntax to avoid nested SelectMany calls
+        // Q9: Find the top 10 longest tracks across all music groups with their group and album info
+        // Use: SelectMany (nested), OrderByDescending, Take, Select
+        // Expected: Flatten to tracks with context, sort by duration, take 10
+        System.Console.WriteLine("\nQ9 (Alternative with Query based syntax to avoid nested SelectMany calls): Top 10 longest tracks:");
+        var longestTracksQueryAlt = (from g in musicgroups
+                          from a in g.Albums
+                          from t in a.Tracks
+                          orderby t.DurationSeconds descending
+                          select new { 
+                              GroupName = g.Name, 
+                              AlbumName = a.Name, 
+                              Track = t 
+                          }).Take(10);
+        foreach (var x in longestTracksQueryAlt) Console.WriteLine($"- {x.Track.Name} ({x.Track.DurationSeconds}s) - {x.AlbumName} by {x.GroupName}");
+#endregion
 
 #region Question 10
         // Q10: Calculate percentage of albums per decade (1970s, 1980s, etc.) for Metal groups
