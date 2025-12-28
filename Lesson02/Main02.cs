@@ -38,5 +38,8 @@ public static class Main02
 
         //Excercise 02.01
         Excericee0201.Entry();
+
+        //Small Exercises
+        SmallExercises.Entry();
     }
 }
