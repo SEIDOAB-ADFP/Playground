@@ -79,7 +79,6 @@ Implement a functional Yahtzee round simulation that demonstrates functional pro
 - **Implement Yahtzee Bonus system**
   - If Yahtzee box is filled with 50 points and player rolls additional Yahtzees
   - Award 100 points per extra Yahtzee (standard rules)
-  - Handle joker rules where extra Yahtzees can be used in other categories
   - Maintain bonus tracking throughout the game
 
 ### Technical Requirements
