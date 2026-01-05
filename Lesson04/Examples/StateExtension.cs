@@ -57,13 +57,7 @@ public static class StateExtensionExamples
     }
     
     #region Employee State Examples
-    
-    // Record types for employee-related state management
-    public record BudgetState(decimal Amount, int ProcessedCount, DateTime LastUpdate);
-    public record CapacityState(int MaxCapacity, int Current, int Available);
-    public record CoverageState(int RequiredHours, int AssignedHours, List<string> Schedule);
-    public record ComplianceState(int MaxViolations, int CurrentViolations, List<string> Issues);
-    
+        
     static void EmployeeStateExamples()
     {
         Console.WriteLine("--- Employee State Examples ---");
@@ -162,14 +156,7 @@ public static class StateExtensionExamples
     #endregion
     
     #region MusicGroup State Examples
-    
-    // Record types for music-related state management
-    public record LabelBudgetState(decimal Budget, decimal Revenue, decimal Reserve, int GroupsProcessed);
-    public record StageTimeState(int TotalMinutes, int UsedMinutes, List<string> Lineup);
-    public record PlaylistDiversityState(int Target, int CurrentScore, Dictionary<string, int> GenreBalance);
-    public record TourCapacityState(int MaxCapacity, int UsedCapacity, List<string> Bookings);
-    public record InvestmentMetrics(int GroupsSigned, decimal BudgetRemaining, List<string> SignedGroups);
-    
+        
     static void MusicGroupStateExamples()
     {
         Console.WriteLine("--- MusicGroup State Examples ---");
@@ -248,28 +235,6 @@ public static class StateExtensionExamples
     
     #region Helper Methods
     
-    // Helper methods for converting structured state to string representation at presentation time
-    private static string BudgetStateToString(BudgetState state) =>
-        $"Amount=${state.Amount:N0}, Processed={state.ProcessedCount}, Updated={state.LastUpdate:HH:mm:ss}";
-    
-    private static string CapacityStateToString(CapacityState state) =>
-        $"Max={state.MaxCapacity}, Current={state.Current}, Available={state.Available}";
-        
-    private static string ComplianceStateToString(ComplianceState state) =>
-        $"Violations={state.CurrentViolations}/{state.MaxViolations}, Issues=[{string.Join(", ", state.Issues.Take(2))}]";
-    
-    private static string HiringMetricsToString(HiringMetrics state) =>
-        $"Hired={state.TotalHired}, Budget=${state.CurrentBudget:N0}, Employees=[{string.Join(", ", state.HiredEmployees.Take(3))}]";
-    
-    private static string LabelBudgetStateToString(LabelBudgetState state) =>
-        $"Budget=${state.Budget:N0}, Revenue=${state.Revenue:N0}, Reserve=${state.Reserve:N0}, Groups={state.GroupsProcessed}";
-    
-    private static string StageTimeStateToString(StageTimeState state) =>
-        $"Total={state.TotalMinutes}min, Used={state.UsedMinutes}min, Remaining={state.TotalMinutes - state.UsedMinutes}min, Acts={state.Lineup.Count}";
-            
-    private static string InvestmentMetricsToString(InvestmentMetrics state) =>
-        $"Signed={state.GroupsSigned}, Budget=${state.BudgetRemaining:N0}, Groups=[{string.Join(", ", state.SignedGroups.Take(3))}]";
-
     // Original helper methods for salary calculations
     private static decimal GetBaseSalary(WorkRole role) => role switch
     {
