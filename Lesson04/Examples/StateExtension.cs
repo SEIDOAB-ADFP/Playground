@@ -118,9 +118,6 @@ public static class StateExtensionExamples
     
     #region Sequential Processing Examples
     
-    // Record types for sequential processing state
-    public record HiringMetrics(int TotalHired, decimal CurrentBudget, List<string> HiredEmployees);
-    
     static void SequentialEmployeeProcessing(ImmutableList<Employee> employees)
     {
         Console.WriteLine("--- Sequential Employee Processing ---");
