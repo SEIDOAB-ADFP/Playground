@@ -15,15 +15,5 @@ public static class CoinFlipGame
 
         // Implement a Coin Flip round simulation here using functional patterns
         // following the exercise instructions in the CoinFlipExercises.md file.
-
-        var coin = new Coin(CoinSide.Heads);
-        System.Console.WriteLine(coin);
-
-        var coin1 = coin.Flip();
-        System.Console.WriteLine(coin1);
-
-        var coin2 = coin1.Flip();
-        System.Console.WriteLine(coin2);
-
     }
 }

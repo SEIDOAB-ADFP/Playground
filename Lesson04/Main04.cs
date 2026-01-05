@@ -9,13 +9,13 @@ public static class Main04
     {
         System.Console.WriteLine("Hello Lesson 04!");
 
-        // //Maybe Bind Extension Method Examples
-        // MaybeExtension.RunExamples();
+        //Maybe Bind Extension Method Examples
+        MaybeExtension.RunExamples();
         
-        // //State Extension Method Examples
-        // StateExtensionExamples.RunExamples();
+        //State Extension Method Examples
+        StateExtensionExamples.RunExamples();
         
-        // Simple Game Exercise: Create a Coin Flip Challenge
+        //Simple Game Exercise: Create a Coin Flip Challenge
         CoinFlipGame.RunSimulation();
    }
 }
