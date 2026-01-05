@@ -73,68 +73,50 @@ public static class StateExtensionExamples
         
         Console.WriteLine($"Working with {employees.Count} employees");
         
-        // Example 1: Payroll processing with structured budget state tracking
-        var initialBudget = new BudgetState(2_000_000m, 0, DateTime.Now);
-        var payrollState = initialBudget
+        // Example 1: Payroll processing (simplified)
+        var totalBudget = 2_000_000m;
+        var payrollState = totalBudget
             .ToState(employees)
             .Bind((budget, emps) => {
                 var totalSalaries = emps.Sum(e => GetBaseSalary(e.Role));
-                var updatedBudget = budget with { 
-                    Amount = budget.Amount - totalSalaries,
-                    ProcessedCount = emps.Count,
-                    LastUpdate = DateTime.Now
-                };
+                var remainingBudget = budget - totalSalaries;
+                
                 var payrollSummary = $"Processed {emps.Count} employees, Total: ${totalSalaries:N0}";
-                return payrollSummary.WithState(updatedBudget);
-            })
-            .UpdateState(budget => budget with { Amount = Math.Max(0, budget.Amount) }); // Ensure budget doesn't go negative
+                return payrollSummary.WithState(remainingBudget);
+            });
             
         Console.WriteLine($"Payroll Processing: {payrollState.CurrentValue}");
-        Console.WriteLine($"Budget State: {BudgetStateToString(payrollState.CurrentState)}\n");
+        Console.WriteLine($"Remaining budget: ${payrollState.CurrentState:N0}\n");
         
-        // Example 2: Employee onboarding with capacity tracking
-        var initialCapacity = new CapacityState(200, employees.Count, 200 - employees.Count);
-        var onboardingState = initialCapacity
+        // Example 2: Employee onboarding (simplified)
+        var hiringCount = 0;
+        var onboardingState = hiringCount
             .ToState(employees)
-            .Bind((capacity, emps) => {
-                var newHires = emps.Where(e => DateTime.Now.Year - e.HireDate.Year < 1).Count();
-                var canHire = Math.Min(capacity.Available, 25); // Plan to hire up to 25 more
+            .Bind((count, emps) => {
+                var newHires = emps.Count(e => DateTime.Now.Year - e.HireDate.Year < 1);
+                var updatedCount = count + newHires;
                 
-                var updatedCapacity = capacity with { 
-                    Available = capacity.Available - canHire,
-                    Current = capacity.Current + canHire
-                };
-                
-                var onboardingPlan = $"Current: {capacity.Current}, New hires this year: {newHires}, " +
-                                   $"Can hire: {canHire} more";
-                return onboardingPlan.WithState(updatedCapacity);
+                var onboardingPlan = $"New hires this year: {newHires}";
+                return onboardingPlan.WithState(updatedCount);
             });
             
         Console.WriteLine($"Onboarding Planning: {onboardingState.CurrentValue}");
-        Console.WriteLine($"Capacity State: {CapacityStateToString(onboardingState.CurrentState)}\n");
+        Console.WriteLine($"Total hiring count: {onboardingState.CurrentState}\n");
                 
-        // Example 3: Credit card policy compliance with violation tracking
-        var initialCompliance = new ComplianceState(5, 0, new List<string>());
-        var complianceState = initialCompliance
+        // Example 3: Credit card policy compliance (simplified)
+        var violationCount = 0;
+        var complianceState = violationCount
             .ToState(employees)
-            .Bind((compliance, emps) => {
-                var highRiskEmployees = emps.Where(e => e.CreditCards.Count > 3).ToList();
-                var newViolations = Math.Min(compliance.MaxViolations - compliance.CurrentViolations, highRiskEmployees.Count);
-                var issues = highRiskEmployees.Take(newViolations).Select(e => $"{e.FirstName} {e.LastName}").ToList();
+            .Bind((violations, emps) => {
+                var highRiskCount = emps.Count(e => e.CreditCards.Count > 3);
+                var updatedViolations = violations + highRiskCount;
                 
-                var updatedCompliance = compliance with { 
-                    CurrentViolations = compliance.CurrentViolations + newViolations,
-                    Issues = compliance.Issues.Concat(issues).ToList()
-                };
-                
-                var complianceReport = $"High-risk employees: {highRiskEmployees.Count}, " +
-                                     $"Policy violations: {newViolations}";
-                
-                return complianceReport.WithState(updatedCompliance);
+                var complianceReport = $"High-risk employees: {highRiskCount}";
+                return complianceReport.WithState(updatedViolations);
             });
             
         Console.WriteLine($"Compliance Check: {complianceState.CurrentValue}");
-        Console.WriteLine($"Compliance State: {ComplianceStateToString(complianceState.CurrentState)}\n");
+        Console.WriteLine($"Total violations found: {complianceState.CurrentState}\n");
                 
         // Example 4: Processing employees sequentially with accumulating state
         SequentialEmployeeProcessing(employees);
@@ -150,35 +132,30 @@ public static class StateExtensionExamples
         Console.WriteLine("--- Sequential Employee Processing ---");
         
         // Simple hiring decisions based on budget
-        var initialMetrics = new HiringMetrics(0, 800_000m, new List<string>());
+        var initialBudget = 800_000m;
         
         var finalState = employees.Take(8).Aggregate(
-            initialMetrics.ToState("Starting hiring process"),
-            (currentState, employee) => currentState.Bind((metrics, report) => {
+            initialBudget.ToState("Starting hiring process"),
+            (currentState, employee) => currentState.Bind((budget, report) => {
                 var salary = GetBaseSalary(employee.Role);
                 var hiringCost = salary + (salary * 0.15m); // 15% benefits overhead
                 
-                if (metrics.CurrentBudget >= hiringCost)
+                if (budget >= hiringCost)
                 {
-                    var newMetrics = metrics with { 
-                        TotalHired = metrics.TotalHired + 1, 
-                        CurrentBudget = metrics.CurrentBudget - hiringCost,
-                        HiredEmployees = metrics.HiredEmployees.Append($"{employee.FirstName} {employee.LastName}").ToList()
-                    };
-                    
+                    var newBudget = budget - hiringCost;
                     var newReport = $"{report}\n  ✓ Hired {employee.FirstName} {employee.LastName} - Cost: ${hiringCost:N0}";
-                    return newReport.WithState(newMetrics);
+                    return newReport.WithState(newBudget);
                 }
                 else
                 {
                     var newReport = $"{report}\n  ✗ Rejected {employee.FirstName} {employee.LastName} - Budget insufficient";
-                    return newReport.WithState(metrics);
+                    return newReport.WithState(budget);
                 }
             })
         );
         
         Console.WriteLine($"{finalState.CurrentValue}");
-        Console.WriteLine($"\nSimple Hiring State: {HiringMetricsToString(finalState.CurrentState)}\n");
+        Console.WriteLine($"Remaining budget: ${finalState.CurrentState:N0}\n");
     }
     #endregion
     

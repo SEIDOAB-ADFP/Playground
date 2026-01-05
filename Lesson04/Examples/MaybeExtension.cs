@@ -32,8 +32,8 @@ public static class MaybeExtension
         Console.WriteLine($"Working with {employees.Count} employees");
         
         // Example 1: Find first veterinarian and bind to create specialized email
-        //var vetEmailResult = noVets.ToMaybe()  //just to show the graceful Nothing handling
-        var vetEmailResult = employees.ToMaybe()
+        var vetEmailResult = noVets.ToMaybe()  //just to show the graceful Nothing handling
+        //var vetEmailResult = employees.ToMaybe()
             .Bind(empList => empList.FirstOrDefault(e => e.Role == WorkRole.Veterinarian))
             .Tap(vet => Console.WriteLine($"Found Veterinarian: {vet.FirstName} {vet.LastName}"))
             .Bind(vet => $"dr.{vet.FirstName.ToLower()}.{vet.LastName.ToLower()}@vetclinic.com");
@@ -50,8 +50,8 @@ public static class MaybeExtension
         DisplayResult("Management Budget", managementBudgetResult);
         
         // Example 3: Find employees with most credit cards and bind to risk assessment
-        //var creditRiskResult = nullCreditCards.ToMaybe() //just to show the graceful Error handling
-        var creditRiskResult = employees.ToMaybe()
+        var creditRiskResult = nullCreditCards.ToMaybe() //just to show the graceful Error handling
+        //var creditRiskResult = employees.ToMaybe()
             .Bind(empList => empList.OrderByDescending(e => e.CreditCards.Count).Take(3).ToList())
             .Bind(topCreditUsers => {
                 var riskProfiles = topCreditUsers.Select(emp => 
@@ -63,8 +63,8 @@ public static class MaybeExtension
         
         // Example 4: Find newest employees and bind to onboarding group
         var onboardingResult = employees.ToMaybe()
-            //.Bind<List<Employee>,List<Employee>>(empList => null) //just to show the graceful Error handling
-            .Bind(empList => empList.Where(e => DateTime.Now.Year - e.HireDate.Year < 1).ToList())
+            .Bind<List<Employee>,List<Employee>>(empList => throw new Exception("Simulated failure during processing")) //just to show the graceful Error handling
+            //.Bind(empList => empList.Where(e => DateTime.Now.Year - e.HireDate.Year < 5).ToList())
             .Bind(newHires => {
 
                 var roleDistribution = newHires.GroupBy(e => e.Role)
