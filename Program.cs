@@ -3,7 +3,7 @@
 Console.WriteLine("Hello Playground!");
 
 // Playground.Lesson01.Main01.Entry();
-// Playground.Lesson02.Main02.Entry();
+ Playground.Lesson02.Main02.Entry();
 // Playground.Lesson03.Main03.Entry();
 //Playground.Lesson04.Main04.Entry();
 //Playground.Lesson05.Main05.Entry();
@@ -13,8 +13,8 @@ Console.WriteLine("Hello Playground!");
 //Playground.Lesson09.Main09.Entry();
 //Playground.Lesson10.Main10.Entry();
 
-Playground.Lesson11.Main11.Entry();
-await Playground.Lesson11.Main11.EntryAsync();
+//Playground.Lesson11.Main11.Entry();
+//await Playground.Lesson11.Main11.EntryAsync();
 
 // Playground.Projects.YahtzeeProject.Entry();
 //Playground.Projects.PokerProject.Entry();   

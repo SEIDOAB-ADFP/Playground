@@ -16,9 +16,8 @@ public static class LinqOverview
 
         // Demonstrating filtering examples (Where, Take, TakeWWhile, Skip, SkipWhile)
         LinqFiltering.RunExamples(employees);
-
         // Demonstrating projecting examples (Select, SelectMany)
-        LinqProjecting.RunExamples(employees);
+         LinqProjecting.RunExamples(employees);
 
         // Demonstrating joining examples (Join, GroupJoin, Zip)
         LinqJoining.RunExamples(employees);

@@ -14,7 +14,7 @@ public static class LinqAggregation
         // Aggregation examples
         // Aggregate: combine names into a single comma-separated string
         var names = employees.Take(5).Select(e => e.FirstName + " " + e.LastName).ToList();
-        var aggregatedNames = names.Aggregate((a, b) => a + ", " + b);
+        var aggregatedNames = names.Aggregate("", (a, b) => a + ", " + b);
         System.Console.WriteLine("Aggregate (first 5 names): " + aggregatedNames);
 
         // Aggregate with a starting value (seed): start at 0 and sum name lengths
