@@ -12,44 +12,79 @@ public static class YahzeeGame
         Console.WriteLine("Testing the Cup of Dice.");
 
         var cupOfDice = new CupOfDice(10);
-        Console.WriteLine($"Cup with 10 dice: {cupOfDice}\n");   
+        Console.WriteLine($"Cup with 10 dice: {cupOfDice}\n");
 
         cupOfDice = new CupOfDice(2);
-        Console.WriteLine($"Cup with 2 dice: {cupOfDice}\n"); 
-
+        Console.WriteLine($"Cup with 2 dice: {cupOfDice}\n");
 
         var yahzeeCup = new YahzeeCup();
-        Console.WriteLine($"Yahzee Cup with 5 dice: {yahzeeCup}\n");  
+        Console.WriteLine($"Yahzee Cup with 5 dice: {yahzeeCup}\n");
 
         Enumerable.Range(1, 10)
-            .Aggregate(yahzeeCup, (currentCup, i) => 
+            .Aggregate(yahzeeCup, (currentCup, i) =>
             {
-                var newCup = currentCup
-                .ShakeAndRoll();
+                var newCup = currentCup.ShakeAndRoll();
 
                 newCup.Tap(cup => Console.WriteLine($"Yahzee Cup with 5 dice: {cup}"))
-                .GetYahtzeeCombination()
-                .Tap(ycombo =>  Console.WriteLine($"Yahzee Combination: {ycombo.GetType().Name}, Score: {ycombo.Score}\n"));
-                
+                    .GetYahtzeeCombination()
+                    .Tap(ycombo => Console.WriteLine($"Yahzee Combination: {ycombo.GetType().Name}, Score: {ycombo.Score}\n"));
+
                 return newCup;
-            });  
+            });
 
+        // skapar spelarna
         ImmutableList<Player> players = ImmutableList.Create(
-            new Player("Alice", new YahzeeCup()),   
-            new Player("Bob", new YahzeeCup()),
-            new Player("Diana", new YahzeeCup()))
+            new Player("Jessica", new YahzeeCup()),
+            new Player("Maria", new YahzeeCup()),
+            new Player("Anders", new YahzeeCup())
+        );
 
-            .Tap(p => Console.WriteLine(string.Join("\n", p.Select(pl => $"{pl.Name} has Yahtzee cup: {pl.YahzeeCup}"))));
+        // skapa scorecards per spelare
+        var scoreCards = ImmutableDictionary.CreateBuilder<string, ScoreCard>();
+        foreach (var player in players)
+            scoreCards[player.Name] = new ScoreCard();
 
+        // spelets state
+        var gameState = (Players: players, ScoreCards: scoreCards.ToImmutable());
 
-        System.Console.WriteLine("\nYahtzee Round Simulation:");
-        System.Console.WriteLine("Your code should implement the Yahtzee round simulation below.");
-        System.Console.WriteLine("========================");
+        Console.WriteLine("\nYahtzee Round Simulation:");
 
-        // Implement a Yahtzee round simulation here using functional patterns
+        // spelet körs 13 rundor
+        var finalState = Enumerable.Range(1, 13)
+            .Aggregate(gameState, (state, round) =>
+            {
+                Console.WriteLine($"\n--- Round {round} ---");
 
-        // use existing monadic extensions and functional patterns
-        // minimize imperative code, maximize declative code using LINQ and extension methods
+                var updatedScoreCards = state.Players.Select(player =>
+                {
+                    // rulla tärningar
+                    var rolledCup = player.YahzeeCup.ShakeAndRoll();
 
+                    // hitta bästa kombination
+                    var bestCombo = rolledCup.GetYahtzeeCombination();
+
+                    // uppdatera scorecard immutabelt
+                    var updatedScoreCard = state.ScoreCards[player.Name].FillBox(bestCombo);
+
+                    //skriver ut resultatet
+                    Console.WriteLine($"{player.Name} rolled {rolledCup}, scored {bestCombo.Score} on {bestCombo.GetType().Name}");
+
+                    return (player.Name, updatedScoreCard);
+                }).ToImmutableDictionary(kv => kv.Name, kv => kv.updatedScoreCard);
+
+                // namnmatchningen måste vara exakt
+                return (Players: state.Players, ScoreCards: updatedScoreCards);
+            });
+
+        //slutresultat
+        Console.WriteLine("\nFinal Scores:");
+        foreach (var kv in finalState.ScoreCards)
+        {
+            Console.WriteLine($"{kv.Key}: Total Score = {kv.Value.TotalScore()} (Upper Bonus: {kv.Value.UpperBonus()})");
+        }
+
+        // Hitta overall vinnare
+        var winner = finalState.ScoreCards.OrderByDescending(kv => kv.Value.TotalScore()).First();
+        Console.WriteLine($"\nOVERALL WINNER: {winner.Key} with {winner.Value.TotalScore()} points");
     }
 }

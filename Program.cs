@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-Console.WriteLine("Hello Playground!");
+//Console.WriteLine("Hello Playground!");
 
 // Playground.Lesson01.Main01.Entry();
  Playground.Lesson02.Main02.Entry();
@@ -16,5 +16,5 @@ Console.WriteLine("Hello Playground!");
 //Playground.Lesson11.Main11.Entry();
 //await Playground.Lesson11.Main11.EntryAsync();
 
-// Playground.Projects.YahtzeeProject.Entry();
+ Playground.Projects.YahtzeeProject.Entry();
 //Playground.Projects.PokerProject.Entry();   
